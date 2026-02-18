@@ -1,166 +1,109 @@
-// Import React hook for state management
 import { useState } from "react";
 
 export default function App() {
 
-  /* =========================
-     STATE MODULE
-     =========================
-     task  → stores current input text
-     items → stores array of todo tasks
-     Each task object:
-     { id, text, checked }
-  ========================== */
-
+  /* ---------- STATE ---------- */
   const [task, setTask] = useState("");
   const [items, setItems] = useState([]);
 
-  /* =========================
-     ADD TASK MODULE
-     =========================
-     - Prevent empty input
-     - Ask confirmation
-     - Add new task object
-     - Reset input field
-  ========================== */
-
+  /* ---------- ADD TASK ---------- */
   const addTask = () => {
-    if (!task.trim()) return;                 // ignore empty text
+    if (!task.trim()) return;
     if (!window.confirm("Add this task?")) return;
 
-    setItems([
-      ...items,                               // keep old tasks
-      { id: Date.now(), text: task, checked: false } // add new task
-    ]);
-
-    setTask("");                              // clear input
+    setItems([...items, { id: Date.now(), text: task, checked: false }]);
+    setTask("");
   };
 
-  /* =========================
-     CHECKBOX TOGGLE MODULE
-     =========================
-     - Toggle selected state
-     - Uses map to update only
-       the clicked task
-  ========================== */
-
+  /* ---------- TOGGLE CHECK ---------- */
   const toggleCheck = (id) => {
     setItems(items.map(i =>
-      i.id === id
-        ? { ...i, checked: !i.checked }       // flip checked value
-        : i
+      i.id === id ? { ...i, checked: !i.checked } : i
     ));
   };
 
-  /* =========================
-     MULTI DELETE MODULE
-     =========================
-     - Confirm deletion
-     - Remove all checked tasks
-  ========================== */
-
+  /* ---------- DELETE MULTI ---------- */
   const deleteSelected = () => {
     if (!window.confirm("Delete selected tasks?")) return;
-
-    setItems(
-      items.filter(i => !i.checked)           // keep only unchecked
-    );
+    setItems(items.filter(i => !i.checked));
   };
 
-  /* =========================
-     SELECTION COUNT MODULE
-     =========================
-     Counts how many tasks are selected.
-     Used to show delete button only
-     when multiple items selected.
-  ========================== */
-
-  const selectedCount =
-    items.filter(i => i.checked).length;
-
-  /* =========================
-     UI RENDER MODULE
-  ========================== */
+  const selectedCount = items.filter(i => i.checked).length;
 
   return (
 
-    // Full screen container + center layout
-    <div className="min-h-screen relative flex items-center justify-center">
+    /* ---------- FULL SCREEN CENTER ---------- */
+    <div className="min-h-screen relative flex items-center justify-center p-4">
 
-      {/* =========================
-         BACKGROUND IMAGE MODULE
-         =========================
-         - Full screen image
-         - Stored in public/bg.jpg
-      ========================== */}
+      {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: "url('/bg.jpg')" }}
       />
 
-      {/* =========================
-         DARK OVERLAY MODULE
-         =========================
-         Improves text readability
-      ========================== */}
+      {/* Overlay */}
       <div className="absolute inset-0 bg-black/40" />
 
-      {/* =========================
-         CONTENT WRAPPER
-         =========================
-         z-index ensures box appears
-         above background
-      ========================== */}
-      <div className="relative z-10 w-full max-w-md mx-4">
+      {/* ---------- RESPONSIVE CARD WRAPPER ---------- */}
+      <div className="
+        relative z-10
+        w-full
+        sm:max-w-md
+        md:max-w-lg
+        lg:max-w-xl
+      ">
 
-        {/* =========================
-           GLASS TODO CARD MODULE
-           =========================
-           Tailwind glass effect:
-           blur + transparency
-        ========================== */}
+        {/* ---------- RESPONSIVE TODO BOX ---------- */}
         <div className="
           backdrop-blur-md
           bg-white/20
           border border-white/30
           rounded-2xl
           shadow-2xl
-          p-6
+
+          p-4
+          sm:p-6
+          md:p-7
         ">
 
-          {/* Title */}
-          <h1 className="text-3xl font-bold text-white text-center mb-6">
+          {/* Responsive title */}
+          <h1 className="
+            text-xl
+            sm:text-2xl
+            md:text-3xl
+            font-bold text-white text-center mb-5
+          ">
             ToDoList
           </h1>
 
-          {/* =========================
-             INPUT + ADD BUTTON ROW
-          ========================== */}
-          <div className="flex gap-3 mb-4">
+          {/* ---------- INPUT ROW ---------- */}
+          <div className="flex gap-2 sm:gap-3 mb-4">
 
-            {/* Controlled input field */}
             <input
-              value={task}                                 // bind to state
-              onChange={(e) => setTask(e.target.value)}    // update state
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
               placeholder="Enter your task"
               className="
-                flex-1 px-4 py-2
+                flex-1
+                px-3 py-2
+                sm:px-4 sm:py-2
                 rounded-lg
-                bg-white/80
+                bg-white/85
                 outline-none
+                text-sm sm:text-base
               "
             />
 
-            {/* Add button */}
             <button
-              onClick={addTask}                            // call addTask
+              onClick={addTask}
               className="
-                px-4 py-2
-                bg-emerald-500
-                hover:bg-emerald-600
+                px-3 sm:px-4
+                py-2
+                bg-emerald-500 hover:bg-emerald-600
                 text-white
                 rounded-lg
                 font-semibold
+                text-sm sm:text-base
               "
             >
               Add
@@ -168,66 +111,52 @@ export default function App() {
 
           </div>
 
-          {/* =========================
-             TASK LIST MODULE
-             =========================
-             Map through items array
-             and render each task
-          ========================== */}
-          <div className="space-y-2 max-h-60 overflow-y-auto">
+          {/* ---------- TASK LIST ---------- */}
+          <div className="
+            space-y-2
+            max-h-52
+            sm:max-h-60
+            md:max-h-72
+            overflow-y-auto
+          ">
 
             {items.map(i => (
-
               <label
-                key={i.id}                                // React key
+                key={i.id}
                 className="
                   flex items-center gap-3
-                  bg-white/70
+                  bg-white/75
                   rounded-lg
                   px-3 py-2
+                  text-sm sm:text-base
                 "
               >
-
-                {/* Checkbox */}
                 <input
                   type="checkbox"
                   checked={i.checked}
                   onChange={() => toggleCheck(i.id)}
-                  className="w-4 h-4"
                 />
 
-                {/* Task text with strike-through if checked */}
-                <span className={
-                  i.checked
-                    ? "line-through opacity-60"
-                    : ""
-                }>
+                <span className={i.checked ? "line-through opacity-60" : ""}>
                   {i.text}
                 </span>
-
               </label>
-
             ))}
 
           </div>
 
-          {/* =========================
-             CONDITIONAL DELETE BUTTON
-             =========================
-             Show only if multiple
-             tasks are selected
-          ========================== */}
+          {/* ---------- CONDITIONAL DELETE ---------- */}
           {selectedCount > 1 && (
             <button
               onClick={deleteSelected}
               className="
                 w-full mt-4
-                bg-red-500
-                hover:bg-red-600
+                bg-red-500 hover:bg-red-600
                 text-white
                 py-2
                 rounded-lg
                 font-semibold
+                text-sm sm:text-base
               "
             >
               Delete Selected
