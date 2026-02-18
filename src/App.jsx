@@ -22,6 +22,12 @@ export default function App() {
     ));
   };
 
+  /* ⭐ ---------- DELETE ONE ---------- */
+  const deleteOne = (id) => {
+    if (!window.confirm("Delete this task?")) return;
+    setItems(items.filter(i => i.id !== id));
+  };
+
   /* ---------- DELETE MULTI ---------- */
   const deleteSelected = () => {
     if (!window.confirm("Delete selected tasks?")) return;
@@ -32,7 +38,6 @@ export default function App() {
 
   return (
 
-    /* ---------- FULL SCREEN CENTER ---------- */
     <div className="min-h-screen relative flex items-center justify-center p-4">
 
       {/* Background */}
@@ -44,120 +49,79 @@ export default function App() {
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/40" />
 
-      {/* ---------- RESPONSIVE CARD WRAPPER ---------- */}
-      <div className="
-        relative z-10
-        w-full
-        sm:max-w-md
-        md:max-w-lg
-        lg:max-w-xl
-      ">
+      {/* Wrapper */}
+      <div className="relative z-10 w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
 
-        {/* ---------- RESPONSIVE TODO BOX ---------- */}
+        {/* Glass Box */}
         <div className="
-          backdrop-blur-md
-          bg-white/20
-          border border-white/30
-          rounded-2xl
-          shadow-2xl
-
-          p-4
-          sm:p-6
-          md:p-7
+          backdrop-blur-md bg-white/20 border border-white/30
+          rounded-2xl shadow-2xl
+          p-4 sm:p-6 md:p-7
         ">
 
-          {/* Responsive title */}
-          <h1 className="
-            text-xl
-            sm:text-2xl
-            md:text-3xl
-            font-bold text-white text-center mb-5
-          ">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white text-center mb-5">
             ToDoList
           </h1>
 
-          {/* ---------- INPUT ROW ---------- */}
+          {/* Input Row */}
           <div className="flex gap-2 sm:gap-3 mb-4">
 
             <input
               value={task}
               onChange={(e) => setTask(e.target.value)}
               placeholder="Enter your task"
-              className="
-                flex-1
-                px-3 py-2
-                sm:px-4 sm:py-2
-                rounded-lg
-                bg-white/85
-                outline-none
-                text-sm sm:text-base
-              "
+              className="flex-1 px-3 py-2 rounded-lg bg-white/85 outline-none"
             />
 
             <button
               onClick={addTask}
-              className="
-                px-3 sm:px-4
-                py-2
-                bg-emerald-500 hover:bg-emerald-600
-                text-white
-                rounded-lg
-                font-semibold
-                text-sm sm:text-base
-              "
+              className="px-3 sm:px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold"
             >
               Add
             </button>
 
           </div>
 
-          {/* ---------- TASK LIST ---------- */}
-          <div className="
-            space-y-2
-            max-h-52
-            sm:max-h-60
-            md:max-h-72
-            overflow-y-auto
-          ">
+          {/* Task List */}
+          <div className="space-y-2 max-h-60 overflow-y-auto">
 
             {items.map(i => (
-              <label
+              <div
                 key={i.id}
-                className="
-                  flex items-center gap-3
-                  bg-white/75
-                  rounded-lg
-                  px-3 py-2
-                  text-sm sm:text-base
-                "
+                className="flex items-center justify-between gap-3 bg-white/80 rounded-lg px-3 py-2"
               >
-                <input
-                  type="checkbox"
-                  checked={i.checked}
-                  onChange={() => toggleCheck(i.id)}
-                />
 
-                <span className={i.checked ? "line-through opacity-60" : ""}>
-                  {i.text}
-                </span>
-              </label>
+                {/* Left side — checkbox + text */}
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={i.checked}
+                    onChange={() => toggleCheck(i.id)}
+                  />
+
+                  <span className={i.checked ? "line-through opacity-60" : ""}>
+                    {i.text}
+                  </span>
+                </div>
+
+                {/* ⭐ Single delete button */}
+                <button
+                  onClick={() => deleteOne(i.id)}
+                  className="text-red-600 font-semibold hover:text-red-800"
+                >
+                  Delete
+                </button>
+
+              </div>
             ))}
 
           </div>
 
-          {/* ---------- CONDITIONAL DELETE ---------- */}
+          {/* Multi Delete Button */}
           {selectedCount > 1 && (
             <button
               onClick={deleteSelected}
-              className="
-                w-full mt-4
-                bg-red-500 hover:bg-red-600
-                text-white
-                py-2
-                rounded-lg
-                font-semibold
-                text-sm sm:text-base
-              "
+              className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold"
             >
               Delete Selected
             </button>
