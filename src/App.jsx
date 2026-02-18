@@ -1,187 +1,95 @@
 import { useState } from "react";
 
 export default function App() {
-
-  /* =========================
-     STATE — stores app data
-  ========================== */
-
-  const [input, setInput] = useState("");
-  const [tasks, setTasks] = useState([]);
-
-  /* =========================
-     ADD TASK
-  ========================== */
+  const [task, setTask] = useState("");
+  const [items, setItems] = useState([]);
 
   const addTask = () => {
-    if (!input.trim()) return;
+    if (!task.trim()) return;
+    if (!window.confirm("Add this task?")) return;
 
-    if (window.confirm("Add this task?")) {
-      setTasks([
-        ...tasks,
-        {
-          id: Date.now(),
-          text: input,
-          checked: false
-        }
-      ]);
-      setInput("");
-    }
+    setItems([...items, { id: Date.now(), text: task, checked: false }]);
+    setTask("");
   };
 
-  /* =========================
-     TOGGLE CHECKBOX
-  ========================== */
-
   const toggleCheck = (id) => {
-    setTasks(tasks.map(t =>
-      t.id === id ? { ...t, checked: !t.checked } : t
+    setItems(items.map(i =>
+      i.id === id ? { ...i, checked: !i.checked } : i
     ));
   };
 
-  /* =========================
-     DELETE ONE TASK
-  ========================== */
-
-  const deleteOne = (id) => {
-    if (window.confirm("Delete this task?")) {
-      setTasks(tasks.filter(t => t.id !== id));
-    }
-  };
-
-  /* =========================
-     DELETE MULTIPLE
-  ========================== */
-
   const deleteSelected = () => {
-    if (window.confirm("Delete selected tasks?")) {
-      setTasks(tasks.filter(t => !t.checked));
-    }
+    if (!window.confirm("Delete selected tasks?")) return;
+    setItems(items.filter(i => !i.checked));
   };
 
-  /* =========================
-     MULTI SELECT COUNT
-  ========================== */
-
-  const selectedCount = tasks.filter(t => t.checked).length;
+  const selectedCount = items.filter(i => i.checked).length;
 
   return (
+    <div className="min-h-screen relative flex items-center justify-center">
 
-    /* =========================
-       PAGE WRAPPER
-    ========================== */
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/bg.jpg')" }}
+      />
 
-    <div className="min-h-screen relative overflow-hidden">
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/40" />
 
-      {/* 🎬 BACKGROUND VIDEO */}
-      <video
-        autoPlay
-        muted
-        loop
-        className="absolute inset-0 w-full h-full object-cover"
-      >
-        <source src="/bg.mp4" type="video/mp4" />
-      </video>
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-md mx-4">
+        <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-2xl shadow-2xl p-6">
 
-      {/* DARK OVERLAY */}
-      <div className="absolute inset-0 bg-black/30"></div>
-
-      {/* CENTER CONTAINER */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
-
-        {/* =========================
-           GLASS CARD
-        ========================== */}
-
-        <div className="
-          w-full max-w-md
-          bg-white/15
-          backdrop-blur-xl
-          border border-white/25
-          rounded-2xl
-          shadow-2xl
-          text-white
-          p-7
-        ">
-
-          {/* TITLE */}
-          <h1 className="text-2xl font-bold text-center mb-5">
+          <h1 className="text-3xl font-bold text-white text-center mb-6">
             ToDoList
           </h1>
 
-          {/* =========================
-             INPUT ROW
-          ========================== */}
-
-          <div className="flex gap-2 mb-4">
+          {/* Input Row */}
+          <div className="flex gap-3 mb-4">
             <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
               placeholder="Enter your task"
-              className="flex-1 px-3 py-2 rounded bg-white/90 text-black outline-none"
+              className="flex-1 px-4 py-2 rounded-lg bg-white/80 outline-none"
             />
-
             <button
               onClick={addTask}
-              className="bg-emerald-500 hover:bg-emerald-600 px-4 rounded font-medium"
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold"
             >
               Add
             </button>
           </div>
 
-          {/* =========================
-             MULTI DELETE BUTTON
-             (only if >1 selected)
-          ========================== */}
+          {/* Task List */}
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {items.map(i => (
+              <label
+                key={i.id}
+                className="flex items-center gap-3 bg-white/70 rounded-lg px-3 py-2"
+              >
+                <input
+                  type="checkbox"
+                  checked={i.checked}
+                  onChange={() => toggleCheck(i.id)}
+                  className="w-4 h-4"
+                />
+                <span className={i.checked ? "line-through opacity-60" : ""}>
+                  {i.text}
+                </span>
+              </label>
+            ))}
+          </div>
 
+          {/* Delete button — show only if multiple selected */}
           {selectedCount > 1 && (
             <button
               onClick={deleteSelected}
-              className="w-full mb-4 bg-red-500 hover:bg-red-600 py-2 rounded"
+              className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold"
             >
-              Delete Selected ({selectedCount})
+              Delete Selected
             </button>
           )}
-
-          {/* =========================
-             TASK LIST
-          ========================== */}
-
-          <div className="space-y-2 max-h-64 overflow-y-auto">
-
-            {tasks.map(task => (
-
-              <div
-                key={task.id}
-                className="bg-white/90 text-black rounded-md px-3 py-2 flex justify-between items-center"
-              >
-
-                {/* LEFT SIDE */}
-                <div className="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    checked={task.checked}
-                    onChange={() => toggleCheck(task.id)}
-                  />
-
-                  <span className={task.checked ? "line-through" : ""}>
-                    {task.text}
-                  </span>
-                </div>
-
-                {/* DELETE BUTTON */}
-                <button
-                  onClick={() => deleteOne(task.id)}
-                  className="text-red-600 font-semibold"
-                >
-                  Delete
-                </button>
-
-              </div>
-
-            ))}
-
-          </div>
 
         </div>
       </div>
